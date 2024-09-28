@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Interface Design</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="password"], input[type="email"], input[type="url"], select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+            display: none;
+        }
+        .row {
+            margin-bottom: 15px;
+        }
+        .toggle-password {
+            cursor: pointer;
+            font-size: 0.9em;
+            color: #007bff;
+            margin-left: 5px;
+        }
+        .profile-picture-preview {
+            width: 100px;
+            height: 100px;
+            margin-top: 10px;
+            background-color: #eee;
+            background-size: cover;
+            background-position: center;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .readonly {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+        }
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .primary {
+            background-color: #28a745;
+            color: white;
+        }
+        .primary:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        @media (max-width: 600px) {
+            .button-group {
+                flex-direction: column;
+            }
+            button {
+                margin-bottom: 10px;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Create Account</h1>
+    <form id="accountForm">
+        <!-- Username -->
+        <div class="row">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" placeholder="Enter your username" maxlength="255" required>
+            <span class="error-message" id="usernameError">Username is already taken.</span>
+        </div>
+
+        <!-- Password -->
+        <div class="row">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" maxlength="255" required>
+            <span class="toggle-password" onclick="togglePassword()">Show</span>
+            <span class="error-message" id="passwordError">Password is too weak.</span>
+        </div>
+
+        <!-- Email -->
+        <div class="row">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="Enter your email" maxlength="255" required>
+            <span class="error-message" id="emailError">Invalid email format.</span>
+        </div>
+
+        <!-- Full Name (Optional) -->
+        <div class="row">
+            <label for="fullName">Full Name (Optional)</label>
+            <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" maxlength="255">
+        </div>
+
+        <!-- Role -->
+        <div class="row">
+            <label for="role">Role</label>
+            <select id="role" name="role" required>
+                <option value="">Select your role</option>
+                <option value="Admin">Admin</option>
+                <option value="User">User</option>
+            </select>
+            <span class="error-message" id="roleError">Please select a role.</span>
+        </div>
+
+        <!-- Profile Picture -->
+        <div class="row">
+            <label for="profilePicture">Profile Picture</label>
+            <input type="url" id="profilePicture" name="profilePicture" placeholder="Enter image URL">
+            <div class="profile-picture-preview" id="profilePicturePreview"></div>
+        </div>
+
+        <!-- Account Created At (Read-only) -->
+        <div class="row">
+            <label for="accountCreatedAt">Account Created At</label>
+            <input type="text" id="accountCreatedAt" name="accountCreatedAt" value="2024-09-28 12:34:56" class="readonly" readonly>
+        </div>
+
+        <!-- Last Updated At (Read-only) -->
+        <div class="row">
+            <label for="lastUpdatedAt">Last Updated At</label>
+            <input type="text" id="lastUpdatedAt" name="lastUpdatedAt" value="2024-09-28 12:34:56" class="readonly" readonly>
+        </div>
+
+        <!-- Buttons -->
+        <div class="button-group">
+            <button type="submit" class="primary" id="submitBtn" disabled>Create Account</button>
+            <button type="button" class="secondary">Cancel</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    const passwordInput = document.getElementById('password');
+    const submitBtn = document.getElementById('submitBtn');
+
+    // Toggle show/hide password
+    function togglePassword() {
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            event.target.textContent = 'Hide';
+        } else {
+            passwordInput.type = 'password';
+            event.target.textContent = 'Show';
+        }
+    }
+
+    // Preview profile picture from URL
+    const profilePictureInput = document.getElementById('profilePicture');
+    const profilePicturePreview = document.getElementById('profilePicturePreview');
+    profilePictureInput.addEventListener('input', function () {
+        profilePicturePreview.style.backgroundImage = `url(${this.value})`;
+    });
+
+    // Form validation and enabling submit button
+    const form = document.getElementById('accountForm');
+    form.addEventListener('input', function () {
+        // Basic validation checks
+        let isValid = form.checkValidity();
+        submitBtn.disabled = !isValid;
+    });
+</script>
+
+</body>
+</html>
